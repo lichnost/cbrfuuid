@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.lichnost</groupId>
+    <artifactId>cbrf-uuid</artifactId>
+    <version>0.1-linux-x86_64</version>
+
+    <properties>
+        <java.compiler.target>1.8</java.compiler.target>
+        <java.compiler.source>1.8</java.compiler.source>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <javacpp.version>1.4.1</javacpp.version>
+        <javacpp.cppbuild.skip>true</javacpp.cppbuild.skip> <!-- To skip execution of cppbuild.sh: -Djavacpp.cppbuild.skip=true -->
+        <javacpp.parser.skip>false</javacpp.parser.skip>     <!-- To skip header file parsing phase: -Djavacpp.parser.skip=true -->
+        <javacpp.compiler.skip>false</javacpp.compiler.skip> <!-- To skip native compilation phase: -Djavacpp.compiler.skip=true -->
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.bytedeco</groupId>
+            <artifactId>javacpp</artifactId>
+            <version>${javacpp.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version> 4.13</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <!-- Do not upgrade past 3.1 to avoid triggering https://issues.apache.org/jira/browse/MSOURCES-95 -->
+                <version>3.1</version>
+                <configuration>
+                    <source>${java.compiler.source}</source>
+                    <target>${java.compiler.target}</target>
+                    <showDeprecation>true</showDeprecation>
+                    <showWarnings>true</showWarnings>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.22.2</version>
+                <configuration>
+                    <systemPropertyVariables>
+                        <java.library.path>${project.build.outputDirectory}/org/lichnost/cbrfuuid/linux-x86_64</java.library.path>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.bytedeco</groupId>
+                <artifactId>javacpp</artifactId>
+                <version>${javacpp.version}</version>
+                <configuration>
+                    <classPath>${project.build.outputDirectory}</classPath>
+                    <includePath>${basedir}/native</includePath>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>javacpp.parser</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>build</goal>
+                        </goals>
+                        <configuration>
+                            <skip>${javacpp.parser.skip}</skip>
+                            <outputDirectory>${project.build.sourceDirectory}</outputDirectory>
+                            <classOrPackageName>org.lichnost.cbrfuuid.presets.*</classOrPackageName>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>javacpp.compiler</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>build</goal>
+                        </goals>
+                        <configuration>
+                            <skip>${javacpp.compiler.skip}</skip>
+                            <classOrPackageName>org.lichnost.cbrfuuid.*</classOrPackageName>
+                            <copyLibs>true</copyLibs>
+                            <outputDirectory>${project.build.outputDirectory}/org/lichnost/cbrfuuid/linux-x86_64</outputDirectory>
+                            <linkPath>${basedir}/native</linkPath>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
