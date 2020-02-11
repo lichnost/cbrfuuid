@@ -8,6 +8,13 @@
     <artifactId>cbrf-uuid</artifactId>
     <version>0.1-linux-x86_64</version>
 
+    <distributionManagement>
+        <repository>
+            <id>bintray-lichnost-public</id>
+            <url>https://api.bintray.com/maven/lichnost/public/cbrfuuid/;publish=1</url>
+        </repository>
+    </distributionManagement>
+
     <properties>
         <java.compiler.target>1.8</java.compiler.target>
         <java.compiler.source>1.8</java.compiler.source>
